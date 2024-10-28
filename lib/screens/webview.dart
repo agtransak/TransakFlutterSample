@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewScreen extends StatefulWidget {
@@ -10,6 +11,15 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late WebViewController controller;
+
+  // Function to launch URL in the default browser
+  Future<void> _launchInBrowser(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw 'Could not launch $url';
+    }
+  }
+
 
   @override
   void initState() {
@@ -30,7 +40,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
           onHttpError: (HttpResponseError error) {},
           onWebResourceError: (WebResourceError error) {},
           onNavigationRequest: (NavigationRequest request) {
-            if (request.url.startsWith('https://www.youtube.com/')) {
+            if (request.url.startsWith('https://eu.onfido.app')) {
+              _launchInBrowser(request.url);
               return NavigationDecision.prevent;
             }
             return NavigationDecision.navigate;
